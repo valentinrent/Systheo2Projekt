@@ -17,8 +17,11 @@ void reset(){
  * @return The rescaled position value, adjusted to remain within a range of 0 to 360.
  */
 float rescalepos(int16_t position){  //rescaling function
-  //TODO
-  return 0;
+  double angle = (360*(double)position)/1010.00;
+  //set to down to 180 degrees
+  angle -= 8.91;
+  if(angle<0){angle += 360;} 
+  return angle;
 }
 
 /**
