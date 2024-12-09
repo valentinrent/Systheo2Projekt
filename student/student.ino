@@ -4,6 +4,13 @@
 
 // Global Variables
 //TODO
+int16_t dervlasterrorval;
+unsigned long dervlasttimestamp;
+
+int16_t integrallasterrorval;
+unsigned long integrallasttimestamp;
+
+
 
 //Resets the controller state when an experiment is started.
 void reset(){
@@ -33,7 +40,15 @@ float rescalepos(int16_t position){  //rescaling function
  */
 int16_t calculate_error(int16_t setpoint, int16_t currentpos){
   //TODO
-  return 0;
+  currentpos = rescalepos(currentpos);
+  int16_t angle = setpoint - currentpos;
+  if(angle > 180){
+    angle -= 360;
+  }
+  else if(angle < -180){
+    angle += 360;
+ }
+  return angle;
 }
 
 /**
@@ -44,7 +59,10 @@ int16_t calculate_error(int16_t setpoint, int16_t currentpos){
  */
 int16_t error_derivative(int16_t error){
   //TODO
-  return 0;
+  int16_t deriv = (error-dervlasterrorval)/(millis()-dervlasttimestamp);
+  dervlasterrorval = error;
+  dervlasttimestamp = millis();
+  return deriv;
 }
 
 /**
@@ -55,7 +73,10 @@ int16_t error_derivative(int16_t error){
  */
 int16_t error_integral(int16_t error){
   //TODO
-  return 0;
+  int16_t integral = (error-integrallasterrorval)*(millis()-integrallasttimestamp);
+  integrallasterrorval = error;
+  integrallasttimestamp = millis();
+  return integral;
 }
 
 /**
