@@ -4,12 +4,18 @@
 
 // Global Variables
 //TODO
-int16_t dervlasterrorval;
+double dervlasterrorval;
 unsigned long dervlasttimestamp;
 
-int16_t integrallasterrorval;
-unsigned long integrallasttimestamp;
 
+unsigned long integrallasttimestamp;
+double errintegral;
+
+double controltorque;
+double K_p = 0.6;
+double K_i = 0.5;
+double K_d = 0.2;
+double T_s = 0.01542;
 
 
 //Resets the controller state when an experiment is started.
@@ -59,9 +65,8 @@ int16_t calculate_error(int16_t setpoint, int16_t currentpos){
  */
 int16_t error_derivative(int16_t error){
   //TODO
-  int16_t deriv = (error-dervlasterrorval)/(millis()-dervlasttimestamp);
+  int16_t deriv = (error-dervlasterrorval);
   dervlasterrorval = error;
-  dervlasttimestamp = millis();
   return deriv;
 }
 
@@ -73,10 +78,9 @@ int16_t error_derivative(int16_t error){
  */
 int16_t error_integral(int16_t error){
   //TODO
-  int16_t integral = (error-integrallasterrorval)*(millis()-integrallasttimestamp);
-  integrallasterrorval = error;
+  errintegral += error*(double)(millis()-integrallasttimestamp)/1000.0;
   integrallasttimestamp = millis();
-  return integral;
+  return errintegral;
 }
 
 /**
@@ -90,7 +94,10 @@ int16_t error_integral(int16_t error){
  */
 int16_t controller(int16_t error, int16_t error_i, int16_t error_d, int16_t measured_disturbance){
   //TODO
-  return 0;
+
+  controltorque = (K_p*error) + (K_i * error_i * T_s) + (K_d * error_d / T_s) - 2 - 1*measured_disturbance;
+  
+  return controltorque;
 }
 
 /**
