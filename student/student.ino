@@ -11,10 +11,15 @@ unsigned long dervlasttimestamp;
 unsigned long integrallasttimestamp;
 double errintegral;
 
+double T_krit = 0.34;
+double K_krit = 1.2;
+
 double controltorque;
-double K_p = 0.6;
-double K_i = 0.5;
-double K_d = 0.2;
+double T_i = 0.5*T_krit;
+double T_d = 0.125*T_krit;
+double K_p = 0.6*K_krit;
+double K_i = K_p/T_i;
+double K_d = K_p * T_d;
 double T_s = 0.01542;
 
 
@@ -95,7 +100,8 @@ int16_t error_integral(int16_t error){
 int16_t controller(int16_t error, int16_t error_i, int16_t error_d, int16_t measured_disturbance){
   //TODO
 
-  controltorque = (K_p*error) + (K_i * error_i * T_s) + (K_d * error_d / T_s) - 2 - 1*measured_disturbance;
+  //controltorque = (K_p*error) + (K_i * error_i * T_s) + (K_d * error_d / T_s) - 2 - 1*measured_disturbance;
+  controltorque = (K_p*error) + (K_i * error_i) + (K_d * error_d) - 2 ;
   
   return controltorque;
 }
