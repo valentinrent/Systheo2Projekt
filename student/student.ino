@@ -11,16 +11,16 @@ unsigned long dervlasttimestamp;
 unsigned long integrallasttimestamp;
 double errintegral;
 
-double T_krit = 0.34;
-double K_krit = 1.2;
+double T_krit = 0.312;
+double K_krit = 1.4;
 
 double controltorque;
-double T_i = 0.5*T_krit;
-double T_d = 0.125*T_krit;
-double K_p = 0.6*K_krit;
+double T_i = 0.8*T_krit;
+double T_d = 0.1*T_krit;
+double K_p = 0.35*K_krit;
 double K_i = K_p/T_i;
 double K_d = K_p * T_d;
-double T_s = 0.01542;
+
 
 
 //Resets the controller state when an experiment is started.
@@ -51,14 +51,17 @@ float rescalepos(int16_t position){  //rescaling function
  */
 int16_t calculate_error(int16_t setpoint, int16_t currentpos){
   //TODO
+  int16_t angle = 0;
   currentpos = rescalepos(currentpos);
-  int16_t angle = setpoint - currentpos;
+  angle = setpoint - currentpos;
   if(angle > 180){
     angle -= 360;
   }
-  else if(angle < -180){
-    angle += 360;
- }
+  if(angle < -180){
+      angle += 360;
+    }
+  
+  
   return angle;
 }
 
@@ -100,8 +103,8 @@ int16_t error_integral(int16_t error){
 int16_t controller(int16_t error, int16_t error_i, int16_t error_d, int16_t measured_disturbance){
   //TODO
 
-  //controltorque = (K_p*error) + (K_i * error_i * T_s) + (K_d * error_d / T_s) - 2 - 1*measured_disturbance;
-  controltorque = (K_p*error) + (K_i * error_i) + (K_d * error_d) - 2 ;
+  controltorque = (K_p*error) + (K_i * error_i * T_s) + (K_d * error_d / T_s) - 2 - 1*measured_disturbance;
+  //controltorque = (K_p*error) + (K_i * error_i) + (K_d * error_d) - 2 ;
   
   return controltorque;
 }
